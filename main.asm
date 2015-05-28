@@ -35,14 +35,17 @@ EXEC	equ	*
 	orcc	#$50
 
 * Init timing sources
-	lda	$FF03		Disable vsync interrupt generation
-	anda	#$FE
-	sta	$FF03
-	tst	$FF02
 
-	lda	$FF01		Disable hsync interrupt generation
+* AS DP IS SET TO $FF, then we can do this
+
+	lda	<$03		Disable vsync interrupt generation
+	anda	#$FE
+	sta	<$03
+	tst	<$02
+
+	lda	<$01		Disable hsync interrupt generation
 	ora	#$01
-	sta	$FF01
+	sta	<$01
 
 * Init audio output
 *	lda	PIA1C1		Enable square wave audio output
