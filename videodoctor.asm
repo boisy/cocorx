@@ -37,7 +37,5 @@ lp1	ldd	#$cfcf
 	cmpx	#32*16
 	bne	lp1
 	rts
-	end	card
-        rts
 
         END     SECTION
