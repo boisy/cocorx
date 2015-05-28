@@ -7,13 +7,13 @@
 *   A = character to clear screen with
 *
 ClearScreen
-        pshs    x,y
+        pshs    x		; WHY ?
         ldx	#$400
-	leay	$200,x
-clloop	sta	,x+
-	cmpx	,y
+	tfr	a,b	
+clloop	std	,x++
+	cmpx	#$600
 	bne	clloop
-	puls    x,y,pc
+	puls    x,pc		; WHY ?
 
 *
 * Print Block
