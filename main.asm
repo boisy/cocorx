@@ -17,13 +17,19 @@
 	NAM	CoCoRX
 	TTL	A Holistic Program for determining the health of a CoCo
 
+*        SECTION vars
+*CoCoType rmb    1
+*        END     SECTION
+
         SECTION main
 
 EXEC	equ	*
 * Set direct page register
-	lda	#$FF
+	lda     #$FF
 	tfr	a,dp
 *	setdp	$FF
+
+        lds     #$7000         Setup stack
 
 * Disable IRQ and FIRQ
 	orcc	#$50
@@ -34,9 +40,9 @@ EXEC	equ	*
 	sta	$FF03
 	tst	$FF02
 
-*	lda	$FF01		Disable hsync interrupt generation
-*	ora	#$01
-*	sta	$FF01
+	lda	$FF01		Disable hsync interrupt generation
+	ora	#$01
+	sta	$FF01
 
 * Init audio output
 *	lda	PIA1C1		Enable square wave audio output
@@ -51,6 +57,7 @@ EXEC	equ	*
         lbsr    ShowTitleScreen
         lbsr    RAMDoctor
         lbsr    VideoDoctor
+        lbsr    SoundDoctor
         lbsr    JoystickDoctor
         lbsr    CassetteDoctor
         lbsr    SerialDoctor

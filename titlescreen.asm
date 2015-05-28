@@ -13,34 +13,28 @@ ShowTitleScreen
 
 Wait    
         pshs    x
-        ldx     #$A000
+        ldx     #$2000
 loop@   leax    -1,x
         cmpx    #$0000
         bne     loop@
         puls    x,pc
 
 Message 
-        fdb     $070D
+        fdb     $060D
         fcc     "COCORX"
         fcb     $00
         fdb     Wait-*-2
 
-* Shots
-        fdb     $0103
-        fcc     "*"
+        fdb     $0708
+        fcc     '"THE DOCTOR IS IN"'
         fcb     $00
         fdb     Wait-*-2
- 
-        fdb     $0201
-        fcc     "*"
+
+        fdb     $0E02
+        fcc     "PRESS [SPACE] TO CONTINUE..."
         fcb     $00
         fdb     Wait-*-2
-        
-        fdb     $0911
-        fcc     "*"
-        fcb     $00
-        fdb     Wait-*-2
-        
+
         fdb     $FFFF
 
         END     SECTION
