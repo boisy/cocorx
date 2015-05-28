@@ -41,7 +41,13 @@ EXEC	equ	*
 	lda	<$03		Disable vsync interrupt generation
 	anda	#$FE
 	sta	<$03
-	tst	<$02
+
+;************************
+; TST is 6+ cycles
+; LDA /LDB is 4
+;************************
+;	tst	<$02
+	lda	<$02
 
 	lda	<$01		Disable hsync interrupt generation
 	ora	#$01
