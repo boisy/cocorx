@@ -1,10 +1,14 @@
         SECTION videodoctor
 
 VideoDoctor
-;*******************************************
-:*TESTCARD BY SIMON JONASSEN
-;*******************************************
+        bsr   ColorBars
+        rts
 
+*******************************************
+* TESTCARD BY SIMON JONASSEN
+*******************************************
+ColorBars
+        pshs    d,x
 	ldx	#$0
 lp1	ldd	#$cfcf
 	std	$400,x
@@ -36,6 +40,6 @@ lp1	ldd	#$cfcf
 
 	cmpx	#32*16
 	bne	lp1
-	rts
+	puls    x,d,pc
 
         END     SECTION

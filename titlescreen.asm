@@ -1,15 +1,15 @@
         SECTION titlescreen
 
 ShowTitleScreen
-        puls    d,x,y
+        puls    a,x,y
 * Clear the screen
-        lda     #$20
+        lda     #$60
 	lbsr	ClearScreen
         
         leax    Message,pcr
         lbsr    PrintBlock
 
-        puls    d,x,y,pc
+        puls    a,x,y,pc
 
 Wait    
         pshs    x
@@ -20,18 +20,35 @@ loop@   leax    -1,x
         puls    x,pc
 
 Message 
-        fdb     $060D
+        fdb     $050D
         fcc     "COCORX"
         fcb     $00
         fdb     Wait-*-2
 
-        fdb     $0708
-        fcc     '"THE DOCTOR IS IN"'
+        fdb     $0707
+        fcb     $40+'"
+        fcc     'THE'
+        fcb     $60
+        fcc     'DOCTOR'
+        fcb     $60
+        fcc     'IS'
+        fcb     $60
+        fcc     'IN'
+        fcb     $40+'"
         fcb     $00
         fdb     Wait-*-2
 
         fdb     $0E02
-        fcc     "PRESS [SPACE] TO CONTINUE..."
+        fcc     'PRESS'
+        fcb     $60
+        fcc     '[SPACE]'
+        fcb     $60
+        fcc     'TO'
+        fcb     $60
+        fcc     'CONTINUE'
+        fcb     $40+'.
+        fcb     $40+'.
+        fcb     $40+'.
         fcb     $00
         fdb     Wait-*-2
 
