@@ -11,10 +11,10 @@
 *
 WaitForSpecificKey
         pshs   a
-        bsr    WaitForKey
-        cmpa   ,s+
-        bne    WaitForSpecificKey
-        rts
+w@      bsr    WaitForKey
+        cmpa   ,s
+        bne    w@
+        puls   a,pc
 
 *
 * Wait for a key
