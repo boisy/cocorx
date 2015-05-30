@@ -1,6 +1,18 @@
         SECTION screenutils
 
 *
+* Wait for SPACE
+*
+* Exit:
+*   A = ASCII character of key
+*
+WaitForSPACE
+        pshs   a
+        lda    #$20
+        bsr    WaitForSpecificKey
+        puls   a,pc
+
+*
 * Wait for a specific key
 *
 * Entry:

@@ -50,7 +50,7 @@ Message
         fcb     $40+'.
         fcb     $40+'.
         fcb     $00
-        fdb     Wait-*-2
+        fdb     WaitForSPACE-*-2
 
         fdb     $FFFF
 

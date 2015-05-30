@@ -65,9 +65,6 @@ EXEC	equ	*
 
         lbsr    ShowTitleScreen
         
-        lda     #$20
-        lbsr    WaitForSpecificKey
-
         lbsr    RAMDoctor
         lbsr    VideoDoctor
         lbsr    SoundDoctor
