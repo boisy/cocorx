@@ -1,7 +1,7 @@
         SECTION titlescreen
 
 ShowTitleScreen
-        puls    a,x,y
+        pshs    a,x,y
 * Clear the screen
         lda     #$60
 	lbsr	ClearScreen

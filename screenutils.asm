@@ -1,6 +1,33 @@
         SECTION screenutils
 
 *
+* Wait for a specific key
+*
+* Entry:
+*   A = ASCII character of key to wait for
+*
+* Exit:
+*   A = ASCII character of key
+*
+WaitForSpecificKey
+        pshs   a
+        bsr    WaitForKey
+        cmpa   ,s+
+        bne    WaitForSpecificKey
+        rts
+
+*
+* Wait for a key
+*
+* Exit:
+*   A = ASCII character of key
+*
+WaitForKey
+        jsr    [$A000]
+        beq    WaitForKey
+        rts
+
+*
 * Clear the screen
 *
 * Entry:

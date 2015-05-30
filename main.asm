@@ -64,6 +64,10 @@ EXEC	equ	*
 *	sta	PIA1C1
 
         lbsr    ShowTitleScreen
+        
+        lda     #$20
+        lbsr    WaitForSpecificKey
+
         lbsr    RAMDoctor
         lbsr    VideoDoctor
         lbsr    SoundDoctor
