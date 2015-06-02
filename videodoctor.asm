@@ -2,6 +2,7 @@
 
 VideoDoctor
         bsr   ColorBars
+        lbsr  WaitForKey
         rts
 
 *******************************************

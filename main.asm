@@ -64,15 +64,16 @@ EXEC	equ	*
 *	sta	PIA1C1
 
         lbsr    ShowTitleScreen
-        
-        lbsr    RAMDoctor
-        lbsr    VideoDoctor
-        lbsr    SoundDoctor
-        lbsr    JoystickDoctor
-        lbsr    CassetteDoctor
-        lbsr    SerialDoctor
-        lbsr    KeyboardDoctor
+showagain
+	lbsr    ShowMenuScreen
+        bra     showagain
+*        lbsr    RAMDoctor
+*        lbsr    VideoDoctor
+*        lbsr    SoundDoctor
+*        lbsr    JoystickDoctor
+*        lbsr    CassetteDoctor
+*        lbsr    SerialDoctor
+*        lbsr    KeyboardDoctor
 
-l       bra     l
 
         END     SECTION
