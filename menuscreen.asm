@@ -28,7 +28,16 @@ Exit    puls    a,x,y,pc
 Return  rts
 
 Message 
-        fdb     $0202
+        fdb     $0108
+        fcc     "COCORX"
+        fcb     $60
+        fcc     "MAIN"
+        fcb     $60
+        fcc     "MENU"
+        fcb     $00
+        fdb     Return-*-2
+
+        fdb     $0302
         fcc     "1-"
         fcb     $60
         fcc     "RAM"
@@ -37,7 +46,7 @@ Message
         fcb     $00
         fdb     Return-*-2
 
-        fdb     $0302
+        fdb     $0402
         fcc     "2-"
         fcb     $60
         fcc     "VIDEO"
@@ -46,19 +55,10 @@ Message
         fcb     $00
         fdb     Return-*-2
 
-        fdb     $0402
-        fcc     "2-"
-        fcb     $60
-        fcc     "SOUND"
-        fcb     $60
-        fcc     "DOCTOR"
-        fcb     $00
-        fdb     Return-*-2
-
         fdb     $0502
         fcc     "3-"
         fcb     $60
-        fcc     "KEYBOARD"
+        fcc     "SOUND"
         fcb     $60
         fcc     "DOCTOR"
         fcb     $00
@@ -67,7 +67,7 @@ Message
         fdb     $0602
         fcc     "4-"
         fcb     $60
-        fcc     "JOYSTICK"
+        fcc     "KEYBOARD"
         fcb     $60
         fcc     "DOCTOR"
         fcb     $00
@@ -75,6 +75,15 @@ Message
 
         fdb     $0702
         fcc     "5-"
+        fcb     $60
+        fcc     "JOYSTICK"
+        fcb     $60
+        fcc     "DOCTOR"
+        fcb     $00
+        fdb     Return-*-2
+
+        fdb     $0802
+        fcc     "6-"
         fcb     $60
         fcc     "SERIAL"
         fcb     $60
@@ -86,8 +95,8 @@ Message
         fcb     $00
         fdb     Return-*-2
 
-        fdb     $0802
-        fcc     "6-"
+        fdb     $0902
+        fcc     "7-"
         fcb     $60
         fcc     "CASSETTE"
         fcb     $60
