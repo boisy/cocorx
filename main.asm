@@ -37,16 +37,16 @@ EXEC	equ	*
 * Set BASIC Reset Flag
         clr     $71
 
-	lda	$FF03		Disable vsync interrupt generation
-	anda	#$FE
-	sta	$FF03
+;	lda	$FF03		Disable vsync interrupt generation
+;	anda	#$FE
+;	sta	$FF03
 
 ;	tst	<$02
-	lda	$FF02
+;	lda	$FF02
 
-	lda	$FF01		Disable hsync interrupt generation
-	ora	#$01
-	sta	$FF01
+;	lda	$FF01		Disable hsync interrupt generation
+;	ora	#$01
+;	sta	$FF01
 
         lbsr    ShowTitleScreen
 showagain

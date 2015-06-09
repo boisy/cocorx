@@ -15,11 +15,11 @@ R8MB	EQU	32		TOGGLE FOR 8MB MEMORY
 RAMDoctor
         lda     #$60
         lbsr    ClearScreen
-	LDX	$FFFE
-	CMPX	#$8C1B
+        lbsr    CoCoType
+        cmpa    #3
 	LBEQ	COCO3
 	STA	FASTC1
-	LEAX	MSGA,PCR	Coco1
+	LEAX	MSGA,PCR	CoCo 1/2
         ldy     #0000
 	LBSR	PrintStringAt
 G@	LEAX	PC1,PCR
