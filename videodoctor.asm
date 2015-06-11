@@ -96,7 +96,7 @@ loop	lda	<$03
 	sync	
 	lda	<$00
 
-	ldb	#$3c		(2)	(36ntsc 34+24PAL)
+	ldb	#$3c		(2)	($22=ntsc/$3c=PAL)
 hloop1	lda	<$01		(4)
 	bpl	hloop1		(3)
 	lda	<$00		(4)
