@@ -20,12 +20,12 @@ loop@   leax    -1,x
         puls    x,pc
 
 Message 
-        fdb     $050D
+        fdb     $020D
         fcc     "COCORX"
         fcb     $00
         fdb     Wait-*-2
 
-        fdb     $0707
+        fdb     $0407
         fcb     $40+'"
         fcc     'THE'
         fcb     $60
@@ -35,6 +35,17 @@ Message
         fcb     $60
         fcc     'IN'
         fcb     $40+'"
+        fcb     $00
+        fdb     Wait-*-2
+
+        fdb     $0704
+        fcc     'A'
+        fcb     $60
+        fcc     'COCO'
+        fcb     $60
+        fcc     'COMMUNITY'
+        fcb     $60
+        fcc     'PROJECT'
         fcb     $00
         fdb     Wait-*-2
 

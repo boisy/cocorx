@@ -91,6 +91,10 @@ done1   puls     d,x,y,pc
 *       X = pointer to byte after nil
 *
 PrintStringAt
+*        pshs     d,y
+*        sty      $0088
+*        JSR      $B99C
+*        puls     y,d,pc
         pshs     d,y
         tfr      y,d
         ldb      #32

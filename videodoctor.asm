@@ -10,39 +10,39 @@ VideoDoctor
 * TESTCARD BY SIMON JONASSEN
 *******************************************
 ColorBars
-        pshs    d,x
-	ldx	#$0
+        pshs    x,d
+	ldx	#$400
 lp1	ldd	#$cfcf
-	std	$400,x
-	std	$402,x
+	std	$0,x
+	std	$2,x
 	ldd	#$9f9f
-	std	$404,x
-	std	$406,x
+	std	$4,x
+	std	$6,x
 	ldd	#$dfdf
-	std	$408,x
-	std	$40a,x
+	std	$8,x
+	std	$a,x
 	ldd	#$8f8f
-	std	$40c,x
-	std	$40e,x
+	std	$c,x
+	std	$e,x
 	ldd	#$efef
-	std	$410,x
-	std	$412,x
+	std	$10,x
+	std	$12,x
 
 	ldd	#$bfbf
-	std	$414,x
-	std	$416,x
+	std	$14,x
+	std	$16,x
 	ldd	#$afaf
-	std	$418,x
-	std	$41a,x
+	std	$18,x
+	std	$1a,x
 	ldd	#$ffff
-	std	$41c,x
-	std	$41e,x
+	std	$1c,x
+	std	$1e,x
 
 	leax	32,x
 
-	cmpx	#32*16
+	cmpx	#$400+(32*16)
 	bne	lp1
-	puls    x,d,pc
+	puls    d,x,pc
 
 *******************************************
 * Checkerboard in the border (coco I/II)
