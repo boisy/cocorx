@@ -1,7 +1,12 @@
-* CoCoRX BY Robert Gault
-* MEMORY TEST PROGRAM FOR UP TO 8MEG COCO PER PAUL T. BARTON
-* MOST OF THE BASE 512K MEMORY IS TESTED, >$6C000 EXCLUDED
-* Intended for a ROM PAK. Runs with any Coco 1,2, or 3.
+* This code is designed to:
+* 1) identify Coco1 or 2 from a Coco3
+* 2) move code to lower RAM as it will not access SEB while in ROM mode
+* 3) indicate the location of faulty RAM
+* 4) Coco1 identify 4K, 16K, 32K, 64K
+* 5) Coco3 identify 128K, 512K, 2M, and 8M
+* 6) changed memory is reset so that nothing is lost
+* Robert Gault
+
 
 
 R1MB	EQU	1		TOGGLE FOR 1MB VID
@@ -11,146 +16,131 @@ V8MB	EQU	8		TOGGLE FOR 8MB VIDEO
 R4MB	EQU	16		TOGGLE FOR 4MB MEMORY
 R8MB	EQU	32		TOGGLE FOR 8MB MEMORY
 
-        SECTION ramdoctor
-RAMDoctor
-        lda     #$60
-        lbsr    ClearScreen
-        lbsr    CoCoType
-        cmpa    #3
-	LBEQ	COCO3
-	STA	FASTC1
-	LEAX	MSGA,PCR	CoCo 1/2
-        ldy     #0000
-	LBSR	PrintStringAt
-G@	LEAX	PC1,PCR
-	LDY	#$E00
-A@	LDD	,X++
+RAMDoctor	STA	ROM
+	LDX	$FFFE		Test for a Coco3
+	CMPX	#$8C1B
+	BNE	A@
+	STA	FASTC3
+	LBRA	COCO3
+A@	STA	FASTC1		ROM fast RAM slow, can't do better on a Coco1 or 2
+	ldd	#$400		Tell Basic the current text screen pointer so
+	std	$88		repeative tests print at start of screen
+	lda	#$60
+	lbsr	ClearScreen
+	LEAX	MSGA-1,PCR	Coco1 or 2 found
+	JSR	PRINT
+	LEAX	PC1,PCR		Move code to low RAM so that most of memory can be accessed
+	LDY	#$D00
+B@	LDD	,X++
 	STD	,Y++
-	CMPX	PC1E,PCR
-	BLO	A@
-	LBRA	$E00
+	CMPX	#PC1E
+	BLO	B@
+	JMP	$D00
 
-PC1	LEAY	MEMTBL,PCR	Test for 4K, 16K, 32K
-	CLRB
+PC1	LEAY	MEMTBL,PCR	Test for 4K, 16K, 32K, and 64K
+	LDB	#$FF
 A@	LDX	,Y++	get an address
 	INCB
-	STB	AMNT2,PCR
+	STB	AMNT2,PCR	position in table
 	LDA	,X	get the byte
 	COM	,X	Change what might be ROM
 	CMPA	,X	did it change?
-	BNE	A@	Go if RAM
-	LEAX	-1,X
-	STX	ADDR,PCR
+	BEQ	B@	Go if ROM ie. no change
+	STA	,X	restore
+	BRA	A@
+B@	LEAX	-1,X	Highest RAM that can be tested
+	STX	ADDR,PCR	save it
 	CMPX	#$7FFF
-	BNE	TSTING	less than 32K RAM
-	STA	RAM
-	LDA	$A000
-	COM	$A000
-	CMPA	$A000
-	BEQ	TSTING	32K RAM
-	INC	AMNT2,PCR
-	LDX	#$FF00
-	STX	ADDR,PCR
-	BSR	TMPVAL
-	STA	RAM
+	BNE	TSTING	less than 32K RAM present
+	STA	RAM	engage full ram mode
+	LDA	$8000
+	COM	$8000	try to change memory
+	CMPA	$8000
+	BEQ	TSTING	only 32K RAM
+	INC	AMNT2,PCR	increase position
+	LDX	#$FF00	maximum address to test is ADDR-1
+	STX	ADDR,PCR	save it
+	BSR	TMPVAL	print total memory
+	STA	RAM	back to RAM mode
 	BRA	TST2
 
 TSTING	BSR	TMPVAL
 TST2	LDX	#$0	Test from $0000-$0DFF
-	LEAY	TABLE1,PCR
-A@	LDA	,X
-	LDB	#3
-	STA	TMP,PCR
-B@	LDA	B,Y
-	STA	,X
-	LDA	,X
-	CMPA	B,Y
-	BNE	ERR
-	DECB
-	BPL	B@
-	LDA	TMP,PCR
-	STA	,X+
-	CMPX	#$E00
+A@	BSR	STUFF
+	CMPX	#$D00	don't overwrite our code
 	BNE	A@
-
-	LDX	#$F00	Test from $0F00-$FEFF
-A@	LDA	,X
-	LDB	#3
-	STA	TMP,PCR
-B@	LDA	B,Y
-	STA	,X
-	LDA	,X
-	CMPA	B,Y
-	BNE	ERR
-	DECB
-	BPL	B@
-	LDA	TMP,PCR
-	STA	,X+
+	LDX	ADDR,PCR
+	CMPX	#$EFF
+	BEQ	OK
+	LDX	#$E00	Test from $E00-$FEFF
+B@	BSR	STUFF
 	CMPX	ADDR,PCR
-	BNE	A@
+	BNE	B@
 	BRA	OK
 
+* Subroutine for TST2 to compress the code
+STUFF	LEAY	TABLE1,PCR	data to write to memory
+A@	LDB	#3	index
+	LDA	,X	get a byte
+	STA	TMP,PCR	save it
+B@	LDA	B,Y	get data
+	STA	,X	write to memory
+	LDA	,X	read it back
+	CMPA	B,Y	did it change?
+	BNE	ERR
+	DECB		update index
+	BPL	B@
+	LDA	TMP,PCR	get original value
+	STA	,X+	restore memory
+	RTS
+
+* This routine prints the amount of Coco1 or 2 memory
 TMPVAL	STA	ROM	Just 32K RAM so go back to ROM
-	LEAX	MSG2-1,PCR
-	LBSR	PRINT
-	LEAX	AMNT-1,PCR
+	LEAX	MSGC-1,PCR	"You seem to have"
+	JSR	PRINT
+	LEAX	AMNT-1,PCR	4,16,32,64K
 	LDA	#5
 	LDB	AMNT2,PCR
 	MUL
 	LEAX	D,X
-	LBRA	PRINT
+	JMP	PRINT
 
+* Print address where RAM failed
 ERR	STA	ROM
 	STX	LOC
-	LEAX	ERRMSG-1,PCR
-	LBSR	PRINT
+	LEAX	ERRMSG-1,PCR	"an error at"
+	JSR	PRINT
 	LDD	LOC,PCR
-	LBSR	NUMBR
+	JSR	NUMBR
 	BRA	EXIT
 	
 OK	STA	ROM
 	LEAX	OKMSG-1,PCR
-OK2	LBSR	PRINT
-EXIT	LBSR	$ADFB
+OK2	JSR	PRINT
+EXIT	JSR	$ADFB
 	STA	SLOWC1
-	ANDCC	#$AF
-	LBRA	$A027
+	RTS
 
-ADDR	RMB	2
-TMP	RMB	1
-LOC	RMB	2
+ADDR	ZMB	2
+TMP	ZMB	1
+LOC	ZMB	1
 MEMTBL	FDB	$1000,$4000,$8000
 TABLE1	FCB	0,$FF,%10101010,%01010101
 MSGA	FCC	/OK, YOU HAVE A COCO1 OR 2/
-	FCB	$0D,0
-MSGB	FCC	/OK, You have a Coco3/
-	FCB	$0D,0
-NOTYET	FCC	/Sorry this is not yet ready!/
-	FCB	$0D,0
-MSGC	FCC	/WHAT DO YOU WANT TO TEST?/
 	FCB	$0D
-	FCC	/  1) MEMORY/
-	FCB	$0D
-	FCC	/  2) SOUND/
-	FCB	$0D
-	FCC	/  3) JOYSTICKS/
-	FCB	$0D
-	FCC	/ENTER (1-3)/
+	FCC	/TESTING MEMORY/
 	FCB	$0D,0
-	
-MSG2	FCC	/YOU SEEM TO HAVE/
+
+MSGC	FCC	/YOU SEEM TO HAVE/
 	FCB	$0D,0
 AMNT2	FCB	0
-AMNT	RMB	5
-	FCC	/04K/	*3
-	FCB	$0D,0	*2
+AMNT	FCC	/04K/	*3bytes
+	FCB	$0D,0	*2bytes
 	FCC	/16K/
 	FCB	$0D,0
 	FCC	/32K/
 	FCB	$0D,0
 	FCC	/64K/
-	FCB	$0D,0
-MSG1	FCC	/TESTING MEMORY/
 	FCB	$0D,0
 ERRMSG	FCC	/AN ERROR OCCURED AT /
 	FCB	0
@@ -160,29 +150,30 @@ PC1E	EQU	*
 
 
 
-COCO3	LEAX	CC3,PCR
+COCO3	LEAX	CC3,PCR	move code to $7000
 	LDY	#$7000
 A@	LDD	,X++
 	STD	,Y++
 	CMPX	#PC3E
 	BLO	A@
-	LBRA	$7000
+	JMP	$7000
 
-CC3	STA	FASTC3
-	STA	RAM
+CC3	STA	RAM		Coco3 needs to run in all RAM mode
 	CLR	$E6		TELL BASIC IT'S TEXT
 	LDD	$FFB0
 	STD	COLORS,PCR
-G@	LBSR	WDTH80		AND WIDTH40
+	JSR	WDTH80		AND WIDTH40
+	LEAX	MSGB-1,PCR
+	JSR	PRINT
 	LEAX	TEST-1,PCR	POINT TO MESSAGE
-	LBSR	PRINT		PRINT IT
+	JSR	PRINT		PRINT IT
 	LBSR	MEMTST		Rough test of memory
 	DECA
 	STA	TOTRAM,PCR
 	STA	MAXRAM,PCR
-	LBSR	$ADFB
+	JSR	$ADFB		wait for keypress
 	LEAX	READY-1,PCR
-	LBSR	PRINT
+	JSR	PRINT
 	LDA	#%01000100	SET COCO3 TYPE MODE; FEXX NOT CNST
 	STA	$FF90		TELL COCO
 * WE ARE NOW READY TO ENGAGE EXTRA MEMORY BUT KEEP TEXT SCREEN
@@ -236,11 +227,11 @@ DONE	LDD	COLORS,PCR
 	LDA	#$3A		RESET MMU BLOCK
 	STA	MMU
 	LEAX	GOOD-1,PCR
-	LBSR	PRINT
-	LBSR	PAUSE
-*	LDA	#%1110110
-*	STA	$FF90
-	LBRA	$8C1B
+	JSR	PRINT
+	JSR	PAUSE
+	JSR	WDTH32
+	STA	ROM
+	RTS
 
 FILL	STS	STACK
 	LDS	#$6000
@@ -278,21 +269,22 @@ ERROR	LEAX	-1,X
 	STB	MMU
 	ANDCC	#$AF
 	LEAX	BAD-1,PCR
-	LBSR	PRINT
+	JSR	PRINT
 	CLRA
 	LDB	EXIMG,PCR
-	LBSR	DECMAL
+	JSR	DECMAL
 	BSR	PRNTAB
 	CLRA
 	LDB	MMUIMG,PCR
-	LBSR	DECMAL
+	JSR	DECMAL
 	BSR	PRNTAB
 	LDD	BADMEM,PCR
-	LBRA	DECMAL
+	JMP	DECMAL
 
 PRNTAB	LEAX	TAB-1,PCR
-	LBRA	PRINT
+	JMP	PRINT
 
+* Rough test of total Coco3 memory
 MEMTST	ORCC	#$50
 	LDX	#'M*256+'T	Unlikely data
 	LDY	#0
@@ -360,37 +352,40 @@ M6M	LDA	#6
 SHOW	ANDCC	#$AF	Start interrupts
 	LEAX	SZ-1,PCR
 	PSHS	A
-	LBSR	PRINT
+	JSR	PRINT
 	LDA	,S
 	DECA
 	LDB	#5
 	MUL
-	LEAX	K128-1,PCR
+	LEAX	K128-1,PCR	table of total memory
 	ABX
 	LDA	CURSOR
 	ORA	#$80
 	STA	CURSOR
-	LBSR	PRINT
+	JSR	PRINT
 	LDA	CURSOR
 	ANDA	#$7F
 	STA	CURSOR
 	LEAX	SZ2-1,PCR
-	LBSR	PRINT
+	JSR	PRINT
 	CLRA
 	PULS	A,PC
 
 * DATA BYTES
-MMUIMG	RMB	1
-BAS512	RMB	1
-STOP	RMB	1
-EXIMG	RMB	1
-MAXRAM	RMB	1
-TBPTR	RMB	1
-BADMEM	RMB	2
-COLORS	RMB	2
-CPU	RMB	1	$FF=M6809 0=HD6309
-STACK	RMB	2
+MMUIMG	ZMB	1
+BAS512	ZMB	1
+STOP	ZMB	1
+EXIMG	ZMB	1
+MAXRAM	ZMB	1
+TBPTR	ZMB	1
+BADMEM	ZMB	2
+COLORS	ZMB	2
+CPU	ZMB	1	$FF=M6809 0=HD6309
+STACK	ZMB	4
 
+MSGB	FCC	/OK, You have a Coco3/
+	FCB	$0D,0
+	
 TEST	FCC	/MEMORY TEST/
 	FCB	$0D
 	FCC	/Doing a quick test for memory, please wait../
@@ -427,7 +422,7 @@ READY	FCB	$0D
 
 GOOD	FCC	/YAHOO!!! No errors found!/
 	fcb	$0d
-	fcc	/Exit with RESET!/
+	fcc	/Hit any key./
 	FDB	$D00
 BAD	FCC	/OOOPS!? Terminated with error at:/
 	FCB	$0D
@@ -440,7 +435,7 @@ TAB	FCC	/                /
 	FCB	0
 
 
-TABLE3	FCB	0,5		* 128K
+TABLE3	ZMB	5		* 128K
 	FCB	0,$35		* 512K
 	FCB	0,$7F		* 1M
 	FCB	0,$FF		* 2M
@@ -448,8 +443,6 @@ TABLE3	FCB	0,5		* 128K
 	FCB	%00100000,$FF	* 6M
 	FCB	%00110000,$FF	* 8M
 
-TOTRAM	RMB	1
-MASK	RMB	1
+TOTRAM	ZMB 1
+MASK	ZMB	1
 PC3E	EQU	*
-
-	END	SECTION

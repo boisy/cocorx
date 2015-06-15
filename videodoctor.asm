@@ -1,10 +1,14 @@
-        SECTION videodoctor
+
 
 VideoDoctor
 	bsr   ColorBars
         lbsr  WaitForKey
+	lda	#$ff		needed as regDP no longer set in main.asm
+	tfr	a,dp
 	bsr   bordertest
-        rts
+	clra
+	tfr	a,dp
+	rts
 
 *******************************************
 * TESTCARD BY SIMON JONASSEN
@@ -96,7 +100,7 @@ loop	lda	<$03
 	sync	
 	lda	<$00
 
-	ldb	#$3c		(2)	($22=ntsc/$3c=PAL)
+	ldb	#$22		(2)	($22=ntsc/$3c=PAL)
 hloop1	lda	<$01		(4)
 	bpl	hloop1		(3)
 	lda	<$00		(4)
@@ -152,4 +156,4 @@ checks	fcb	$00,$00,$00,$0f,$ff,$ff,$ff,$00,$00,$00,$0f,$ff,$ff,$ff,$00,$00,$00,$
 	fcb	$cf,$cf,$cf,$ca,$80,$80,$80,$cf,$cf,$cf,$ca,$80,$80,$80,$cf,$cf,$cf,$ca,$80,$80,$80,$cf,$cf,$cf,$ca,$80,$80,$80,$cf,$cf,$cf,$ca
 
 
-        END     SECTION
+

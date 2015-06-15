@@ -17,19 +17,11 @@
 	NAM	CoCoRX
 	TTL	A Holistic Program for determining the health of a CoCo
 
-*        SECTION vars
-*CoCoType rmb    1
-*        END     SECTION
 
-        SECTION main
+	org $C000
 
 EXEC	equ	*
-* Set direct page register
-*	lda     #$FF
-*	tfr	a,dp
-*	setdp	$FF
 
-        lds     #$7000         Setup stack
 
 * Disable IRQ and FIRQ
 	orcc	#$50
@@ -37,28 +29,34 @@ EXEC	equ	*
 * Set BASIC Reset Flag
         clr     $71
 
-;	lda	$FF03		Disable vsync interrupt generation
-;	anda	#$FE
-;	sta	$FF03
-
-;	tst	<$02
-;	lda	$FF02
-
-;	lda	$FF01		Disable hsync interrupt generation
-;	ora	#$01
-;	sta	$FF01
 
         lbsr    ShowTitleScreen
 showagain
 	lbsr    ShowMenuScreen
         bra     showagain
-*        lbsr    RAMDoctor
-*        lbsr    VideoDoctor
-*        lbsr    SoundDoctor
-*        lbsr    JoystickDoctor
-*        lbsr    CassetteDoctor
-*        lbsr    SerialDoctor
-*        lbsr    KeyboardDoctor
 
+	include	screenutils.asm
+	include	menuscreen.asm
+	include	symbols.asm
+	include	titlescreen.asm
+	include	ramdoctor.asm
+	include	videodoctor.asm
+	include	sounddoctor.asm
+	include	joystickdoctor.asm
+	include	cassettedoctor.asm
+	include	serialdoctor.asm
+	include	keyboarddoctor.asm
+	zmb	$E000-*
 
-        END     SECTION
+* The zmb is necessary for testing with some emulators. It will ensure
+* that the resulting cocorx.rom is the full $2000 bytes. R Gault
+*
+* All SECTION commands have been removed. All files are included here
+* and there is a single lwasm main.asm to create the rom. This greatly
+* improves addressing for all files. However there is still a problem
+* with the use of RMB. The address counter gets lost! Please replace RMB
+* with FCBs or ZMB unless someone can get RMB to work in this project. R Gault
+*
+* You can use either the Go file or the makefile to create this project.
+* On a Windows system, just rename Go to go.bat for it to work. With
+* Windows, you will need mingw and msys to use the makefile. R Gault

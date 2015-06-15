@@ -1,4 +1,4 @@
-        SECTION titlescreen
+
 
 ShowTitleScreen
         pshs    a,x,y
@@ -65,4 +65,4 @@ Message
 
         fdb     $FFFF
 
-        END     SECTION
+

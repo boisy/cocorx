@@ -1,4 +1,4 @@
-        SECTION screenutils
+
 
 *
 * Wait for SPACE
@@ -109,5 +109,5 @@ prloop  lda      ,x+
         bra      prloop
 done    puls     y,d,pc
 
-        END      SECTION
+
 

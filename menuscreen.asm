@@ -1,4 +1,4 @@
-        SECTION menuscreen
+
 
 ShowMenuScreen
         pshs    a,x,y
@@ -6,7 +6,7 @@ ShowMenuScreen
         lda     #$60
 	lbsr	ClearScreen
         
-        leax    Message,pcr
+        leax    Message1,pcr
         lbsr    PrintBlock
 
         lbsr    WaitForKey
@@ -27,7 +27,7 @@ Exit    puls    a,x,y,pc
 
 Return  rts
 
-Message 
+Message1 
         fdb     $0108
         fcc     "COCORX"
         fcb     $60
@@ -106,4 +106,4 @@ Message
 
         fdb     $FFFF
 
-        END     SECTION
+
