@@ -19,10 +19,19 @@ IsIt2   cmpa    #'2
         lbsr    VideoDoctor
 IsIt3   cmpa    #'3
         bne     IsIt4
-        lbsr    KeyboardDoctor
+        lbsr    SoundDoctor
 IsIt4   cmpa    #'4
-        bne     Exit
+        bne     IsIt5
+        lbsr    KeyboardDoctor
+IsIt5   cmpa    #'5
+        bne     IsIt6
         lbsr    JoystickDoctor
+IsIt6   cmpa    #'6
+        bne     IsIt7
+        lbsr    SerialDoctor
+IsIt7   cmpa    #'7
+        bne     Exit
+        lbsr    CassetteDoctor
 Exit    puls    a,x,y,pc
 
 Return  rts
