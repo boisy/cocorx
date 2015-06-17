@@ -3,6 +3,8 @@
 JoystickDoctor
 	lda	#$60
 	lbsr	ClearScreen
+	ldd	#$400
+	std	$88
 	leax	msgjy-1,pcr
 	jsr	PRINT
 l@	clrb
