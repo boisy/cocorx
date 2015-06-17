@@ -1,4 +1,4 @@
-
+* Code by Robert Gault
 * The values of the two joysticks are stored at $15A-$15D
 JoystickDoctor
 	lda	#$60
