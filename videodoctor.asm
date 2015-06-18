@@ -82,7 +82,6 @@ again	ldd	,u
 	cmpx	#$420
 	blo	again
 
-
 	lda	#$7
 	sta	<$03
 	sta	<$01
@@ -147,6 +146,9 @@ hloop3	lda	<$01
 	bita	#8
 	bne	loop
 	clr	<$22
+	ldd	#$3434	you must restore the normal $FF01 and $FF03 values R.G.
+	sta	<$01
+	stb	<$03
 	puls	pc
 
 
