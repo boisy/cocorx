@@ -149,7 +149,7 @@ hloop3	lda	<$01
 	ldd	#$3434	you must restore the normal $FF01 and $FF03 values R.G.
 	sta	<$01
 	stb	<$03
-	puls	pc
+	rts
 
 
 	
