@@ -7,6 +7,18 @@ KeyboardDoctor lda #$60
 	lbsr	ClearScreen
 	ldx	#$400
 	stx	$88
+	clr	$29
+	leax	KyMsg1-1,pcr
+	jsr	PRINT
+A@	jsr	[$A000]
+	beq	A@
+	cmpa	#'4
+	bne	B@
+	com	$29
+B@	lda #$60
+	lbsr	ClearScreen
+	ldx	#$400
+	stx	$88
 	ldx	$FFFE
 	cmpx	#$8C1B
 	lbeq	c3ky
@@ -56,14 +68,22 @@ g@	cmpa	$44
 c@	rts
 
 flip	ldb	[,y]
-	eorb	#$40
-	stb	[,y]
+	tst	$29
+	beq	flip1
+	andb	#%10111111
+	bra	flip2
+flip1	eorb	#$40
+flip2	stb	[,y]
 	ldx	,y
 	cmpx	#$461
 	bne	a@
 	ldb	$460+25
-	eorb	#$40
-	stb	$460+25
+	tst	$29
+	beq	flip3
+	andb	#%10111111
+	bra	flip4
+flip3	eorb	#$40
+flip4	stb	$460+25
 a@	rts
 
 c3ky	leax	KyCC3-1,pcr
@@ -103,7 +123,7 @@ e@	cmpa	,x+
 	cmpy	#EndMx3
 	bne	e@
 	bra	b@
-f@	bsr	flip
+f@	lbsr	flip
 b@	jsr	[$A000]
 	bne	h@
 	lda	#$7F
@@ -118,6 +138,11 @@ h@	cmpa	$44
 	lbsr	flip
 	bra	d@
 c@	rts
+
+KyMsg1 fcc	/SELECT CUMULATIVE (4) OR/
+	fcb	$0D
+	fcc	/SINGLE (not4) KEY PRESS RESULTS/
+	fcb	$0D,0
 
 KyCC3
 	fcc	/  1 2 3 4 5 6 7 8 9 0 : - BRK/
