@@ -11,5 +11,8 @@ runxroar: cocorx.rom
 runmame: cocorx.rom
 	mame64 -homepath $(MAMEPATH) -rompath $(MAMEPATH)/roms -video opengl -window coco2b -cart cocorx.rom
 
+loadromemu: cocorx.rom
+	ostrich2.py --device /dev/cu.usbserial-A100K8WY write --address 0xc000 cocorx.rom 
+
 clean:
 	rm -f $(OBJS) cocorx.rom
