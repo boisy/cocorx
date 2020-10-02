@@ -94,7 +94,7 @@ B@	LDA	B,Y	get data
 	STA	,X+	restore memory
 	RTS
 
-* This routine prints the amount of Coco1 or 2 memory
+* This routine prints the amount of CoCo 1 or 2 RAM
 TMPVAL	STA	ROM	Just 32K RAM so go back to ROM
 	LEAX	MSGC-1,PCR	"You seem to have"
 	JSR	PRINT
@@ -126,15 +126,15 @@ TMP	ZMB	1
 LOC	ZMB	1
 MEMTBL	FDB	$1000,$4000,$8000
 TABLE1	FCB	0,$FF,%10101010,%01010101
-MSGA	FCC	/OK, YOU HAVE A COCO1 OR 2/
+MSGA	FCC	/OK, YOU HAVE A COCO 1 OR 2/
 	FCB	$0D
 	FCC	/TESTING MEMORY/
 	FCB	$0D,0
 
-MSGC	FCC	/YOU SEEM TO HAVE/
-	FCB	$0D,0
+MSGC	FCC	/THIS MACHINE HAS /
+	FCB	0
 AMNT2	FCB	0
-AMNT	FCC	/04K/	*3bytes
+AMNT	FCC	/ 4K/	*3bytes
 	FCB	$0D,0	*2bytes
 	FCC	/16K/
 	FCB	$0D,0

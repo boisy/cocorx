@@ -49,6 +49,19 @@ Message
         fcb     $00
         fdb     Wait-*-2
 
+        fdb     $0A02
+        fcc     'WWW'
+        fcb		$40+'.
+        fcc		'GITHUB'
+        fcb		$40+'.
+        fcc		'COM'
+        fcb		$40+'/
+        fcc		'BOISY'
+        fcb		$40+'/
+        fcc		'COCORX'
+        fcb     $00
+        fdb     Wait-*-2
+
         fdb     $0E02
         fcc     'PRESS'
         fcb     $60
